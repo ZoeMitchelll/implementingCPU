@@ -12,7 +12,10 @@
  */
 
 
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Queue;
 
 public class FIFOQueue{
     // Array used to implement the queue.
@@ -37,19 +40,15 @@ public class FIFOQueue{
 
     // Inserts an element at the rear of the queue.
     public void enQueue (PCB data) throws NullPointerException, IllegalStateException{
-
-        String path = "";
         rear++;
         size++;
         if(queueRep[0]==null){
             queueRep[0] = data;
-            path += "1";
         }
         else{
             for(int i = 0; i< size; i++){ //[arrival 2] data = arrival 3 i = 0
                 if(i == size-1){
                     queueRep[i] = data;
-                    path += "2";
                 }
                 else if(queueRep[i].getArrival()< data.getArrival()) {
                     continue;
@@ -57,11 +56,41 @@ public class FIFOQueue{
                 else{
                     adjustNdx(i);
                     queueRep[i] = data;
-                    path += "3";
                     break;
                 }
             }
         }
+    }
+
+    // Inserts an element at the rear of the queue.
+    public void sortSJN () throws NullPointerException, IllegalStateException{
+        PCB[] order = new PCB[size];
+        order[0] = queueRep[0];
+        int jobDone = queueRep[0].getArrival()+queueRep[0].getDuration();
+        PCB nextJob = null;
+        ArrayList<PCB> remainingJobs = new ArrayList<PCB>(Arrays.asList(queueRep));
+        Iterator<PCB> itr = remainingJobs.iterator();
+        for(int i = 1; i<size; i++) {
+            while (itr.hasNext()) { //goes through every job and finds smallest
+                PCB currPCB = itr.next();
+                if (currPCB.getArrival() < jobDone) {
+                    if (nextJob == null) {
+                        nextJob = currPCB;
+                    } else if (currPCB.getDuration() < nextJob.getDuration()) {
+                        nextJob = currPCB;
+                    }
+                }
+            }
+            remainingJobs.remove(nextJob);
+            order[i] = nextJob;
+            jobDone = jobDone + nextJob.getDuration();
+            nextJob = null;
+        }
+        for (PCB p: order) {
+            System.out.println("order " + " " +p.getDuration() + "size " + size);
+        }
+        System.out.println();
+        queueRep = order;
     }
 
     // Removes the front element from the queue.
