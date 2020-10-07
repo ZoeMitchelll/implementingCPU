@@ -71,8 +71,17 @@ public class FIFOQueue{
         ArrayList<PCB> remainingJobs = new ArrayList<PCB>(Arrays.asList(queueRep));
         Iterator<PCB> itr = remainingJobs.iterator();
         for(int i = 1; i<size; i++) {
-            while (itr.hasNext()) { //goes through every job and finds smallest
-                PCB currPCB = itr.next();
+//            while (itr.hasNext()) { //goes through every job and finds smallest
+//                PCB currPCB = itr.next();
+//                if (currPCB.getArrival() < jobDone) {
+//                    if (nextJob == null) {
+//                        nextJob = currPCB;
+//                    } else if (currPCB.getDuration() < nextJob.getDuration()) {
+//                        nextJob = currPCB;
+//                    }
+//                }
+//            }
+            for(PCB currPCB: remainingJobs){
                 if (currPCB.getArrival() < jobDone) {
                     if (nextJob == null) {
                         nextJob = currPCB;
