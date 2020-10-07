@@ -6,7 +6,7 @@ public class Main {
 
     public static void main(String args[])
     {
-        int duration, numPCB;
+        int duration, numPCB, arrival;
         Scanner scan = new Scanner(System.in);
 
         BinaryHeap<Integer> SJNQueue; //Queue for SJN ordering. Note that BinaryHeap is a template class
@@ -22,8 +22,11 @@ public class Main {
             //Add new PCB to FIFOQueue and BinaryHeap
             System.out.println("Enter CPU duration of process " + (i+1) + ":");
             duration = scan.nextInt();
-            SJNQueue.insert(duration);
-            FCFSQueue.enQueue(duration);
+            System.out.println("Enter arrival time duration of process " + (i+1) + ":");
+            arrival = scan.nextInt();
+            //Add PCB not duration PCB has arrival and duration inside
+//            SJNQueue.insert(duration);
+//            FCFSQueue.enQueue(duration);
         }
 
         System.out.println("-----------------FCFS Order-------------------");

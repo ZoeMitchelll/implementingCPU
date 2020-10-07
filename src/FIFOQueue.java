@@ -16,7 +16,7 @@
 
 public class FIFOQueue{
     // Array used to implement the queue.
-    private int[] queueRep;         //**** Queue of integers
+    private PCB[] queueRep;         //**** Queue of integers
     private int size, front, rear;
 
     // Length of the array used to implement the queue.
@@ -25,23 +25,27 @@ public class FIFOQueue{
 
     // Initializes the queue to use an array of default length.
     public FIFOQueue (){
-        queueRep = new int [CAPACITY];  //****
+        queueRep = new PCB [CAPACITY];  //****
         size  = 0; front = 0; rear  = 0;
     }
 
     // Initializes the queue to use an array of given length.
     public FIFOQueue (int cap){
-        queueRep = new int [ cap];
+        queueRep = new PCB [cap];
         size  = 0; front = 0; rear  = 0;
     }
 
     // Inserts an element at the rear of the queue.
-    public void enQueue (int data) throws NullPointerException, IllegalStateException{
-        if (size == CAPACITY)
-            expand();
-        size++;
-        queueRep[rear] = data;
-        rear = (rear+1) % CAPACITY;
+    public void enQueue (PCB data) throws NullPointerException, IllegalStateException{
+        if(queueRep[0]==null){
+            queueRep[0] = data;
+        }
+        for(int i = 0; i< queueRep.length; i++){ //[2,5,7,9] data = 6 i = 2
+            if(queueRep[i].getArrival()== data.getArrival() || queueRep[i].getArrival()> data.getArrival()){
+                adjustNdx(i);
+                queueRep[i] = data;
+            }
+        }
     }
 
     // Removes the front element from the queue.
@@ -89,6 +93,13 @@ public class FIFOQueue{
         CAPACITY *= 2;
     }
 
-
+    private void adjustNdx(int startNdx){
+        for(int i = queueRep.length-1; i>startNdx; i--){
+            if(queueRep[i] == null && queueRep[i-1] == null){
+                continue;
+            }
+            queueRep[i] = queueRep[i-1];
+        }
+    }
 
 }

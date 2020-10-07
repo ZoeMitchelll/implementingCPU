@@ -3,14 +3,15 @@ public class PCB implements Comparable <PCB>{
 
     private static int ID = 0;
     private status s;
-    private int cycles_remaining;
+    private int cycles_remaining, arrival_time;
     public enum status{RUNNING, READY, WAITING, HOLD};
-    public PCB()
+    public PCB(int dur, int time)
     {
         //Default constructor
         ++ID;
         s = status.HOLD;
-        cycles_remaining = 1000;
+        cycles_remaining = dur;
+        arrival_time = time;
     }
 
     public int compareTo(PCB p) {
@@ -41,6 +42,12 @@ public class PCB implements Comparable <PCB>{
     {
         //Return number of remaining CPU cycles
         return cycles_remaining;
+    }
+
+    public int getArrival()
+    {
+        //Return number of remaining CPU cycles
+        return arrival_time;
     }
 
 }
