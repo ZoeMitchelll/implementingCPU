@@ -26,19 +26,19 @@ public class Main {
             arrival = scan.nextInt();
             //Add PCB not duration PCB has arrival and duration inside
 //            SJNQueue.insert(duration);
-//            FCFSQueue.enQueue(duration);
+            FCFSQueue.enQueue(new PCB(duration,arrival));
         }
 
         System.out.println("-----------------FCFS Order-------------------");
         for (int i = 0; i < numPCB; i++)
         {
-            System.out.println(FCFSQueue.deQueue());
+            System.out.println(FCFSQueue.deQueue().getDuration());
         }
         System.out.println("-----------------SJN Order-------------------");
         for (int i = 0; i < numPCB; i++)
         {
-            System.out.println(SJNQueue.findMin());
-            SJNQueue.deleteMin();
+//            System.out.println(SJNQueue.findMin());
+//            SJNQueue.deleteMin();
 
         }
 

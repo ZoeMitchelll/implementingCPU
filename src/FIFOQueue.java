@@ -37,29 +37,43 @@ public class FIFOQueue{
 
     // Inserts an element at the rear of the queue.
     public void enQueue (PCB data) throws NullPointerException, IllegalStateException{
+
+        String path = "";
+        rear++;
+        size++;
         if(queueRep[0]==null){
             queueRep[0] = data;
+            path += "1";
         }
-        for(int i = 0; i< queueRep.length; i++){ //[2,5,7,9] data = 6 i = 2
-            if(queueRep[i].getArrival()== data.getArrival() || queueRep[i].getArrival()> data.getArrival()){
-                adjustNdx(i);
-                queueRep[i] = data;
+        else{
+            for(int i = 0; i< size; i++){ //[arrival 2] data = arrival 3 i = 0
+                if(i == size-1){
+                    queueRep[i] = data;
+                    path += "2";
+                }
+                else if(queueRep[i].getArrival()< data.getArrival()) {
+                    continue;
+                }
+                else{
+                    adjustNdx(i);
+                    queueRep[i] = data;
+                    path += "3";
+                    break;
+                }
             }
         }
     }
 
     // Removes the front element from the queue.
-    public int deQueue () throws IllegalStateException{
+    public PCB deQueue () throws IllegalStateException{
         // Effects:   If queue is empty, throw IllegalStateException,
         // else remove and return oldest element of this
         if (size == 0)
             throw new IllegalStateException ("Queue is empty: Underflow");
         else {
             size--;
-            int data = queueRep [ (front % CAPACITY) ];
-            queueRep [front] = -1;
-            front = (front+1) % CAPACITY;
-            return data;
+            front++;
+            return queueRep[front-1];
         }
     }
 
@@ -76,21 +90,6 @@ public class FIFOQueue{
     // Returns the number of elements in the queue.
     public int size() {
         return size;
-    }
-
-    // Doubles the size of the queue
-    private void expand(){
-        int length = size();
-        int[] newQueue = new int[2 * length];
-
-        //copy items
-        for(int i = front; i <= rear; i ++)
-            newQueue[i-front] = queueRep[i%CAPACITY];
-
-        queueRep = newQueue;
-        front = 0;
-        rear = size-1;
-        CAPACITY *= 2;
     }
 
     private void adjustNdx(int startNdx){
