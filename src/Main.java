@@ -14,7 +14,7 @@ public class Main {
 
         System.out.println("How many processes will you create?");
         numPCB = scan.nextInt();
-        SJNQueue = new FIFOQueue((numPCB));
+        SJNQueue = new FIFOQueue((numPCB)); //used FIFO queue to incorporate different starting times in SJN
         FCFSQueue = new FIFOQueue((numPCB));
 
         for(int i = 0; i < numPCB; i++)
@@ -23,12 +23,12 @@ public class Main {
             System.out.println("Enter CPU duration of process " + (i+1) + ":");
             duration = scan.nextInt();
             System.out.println("Enter arrival time duration of process " + (i+1) + ":");
-            arrival = scan.nextInt();
+            arrival = scan.nextInt(); //added arival for extra credits
             //Add PCB not duration PCB has arrival and duration inside
-            SJNQueue.enQueue(new PCB(duration,arrival));
+            SJNQueue.enQueue(new PCB(duration,arrival));// puts PCB in order of arrial during enqueue
             FCFSQueue.enQueue(new PCB(duration,arrival));
         }
-        SJNQueue.sortSJN();
+        SJNQueue.sortSJN(); //puts array of waiting jobs after completed jobs into sjn order
 
         System.out.println("-----------------FCFS Order-------------------");
         for (int i = 0; i < numPCB; i++)

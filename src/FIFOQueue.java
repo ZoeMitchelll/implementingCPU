@@ -19,11 +19,11 @@ import java.util.Queue;
 
 public class FIFOQueue{
     // Array used to implement the queue.
-    private PCB[] queueRep;         //**** Queue of integers
+    private PCB[] queueRep;         //**** Queue of PCB
     private int size, front, rear;
 
     // Length of the array used to implement the queue.
-    private static int CAPACITY = 100;	//Default Queue size
+    private static int CAPACITY = 100;	//Default Queue size *never used
 
 
     // Initializes the queue to use an array of default length.
@@ -35,7 +35,7 @@ public class FIFOQueue{
     // Initializes the queue to use an array of given length.
     public FIFOQueue (int cap){
         queueRep = new PCB [cap];
-        size  = 0; front = 0; rear  = 0;
+        size  = 0; front = 0; rear  = 0; //only uses front and size
     }
 
     // Inserts an element at the rear of the queue.
@@ -43,26 +43,26 @@ public class FIFOQueue{
         rear++;
         size++;
         if(queueRep[0]==null){
-            queueRep[0] = data;
+            queueRep[0] = data; //only PCB is always first PCB
         }
         else{
             for(int i = 0; i< size; i++){ //[arrival 2] data = arrival 3 i = 0
                 if(i == size-1){
-                    queueRep[i] = data;
+                    queueRep[i] = data; //latest arriving PCB is always last in queue
                 }
                 else if(queueRep[i].getArrival()< data.getArrival()) {
-                    continue;
+                    continue; //later PCB is placed behind earlier ones
                 }
                 else{
-                    adjustNdx(i);
-                    queueRep[i] = data;
+                    adjustNdx(i); //all PCB are moved back by one index
+                    queueRep[i] = data; //"empty" index is where PCB go since everything infront is earlier and behind is later
                     break;
                 }
             }
         }
     }
 
-    // Inserts an element at the rear of the queue.
+    // Inserts an element in order of SJN if waiting status.
     public void sortSJN () throws NullPointerException, IllegalStateException{
         PCB[] order = new PCB[size];
         order[0] = queueRep[0];
@@ -70,18 +70,18 @@ public class FIFOQueue{
         PCB nextJob = null;
         ArrayList<PCB> remainingJobs = new ArrayList<PCB>(Arrays.asList(queueRep));
         Iterator<PCB> itr = remainingJobs.iterator();
-        for(int i = 1; i<size; i++) {
+        for(int i = 1; i<size; i++) {// earliest job is completed and waiting jobs must be sorted
             for(PCB currPCB: remainingJobs){
                 if (currPCB.getArrival() < jobDone) {
                     if (nextJob == null) {
-                        nextJob = currPCB;
+                        nextJob = currPCB; //if there is only one waiting job then that job is next
                     } else if (currPCB.getDuration() < nextJob.getDuration()) {
-                        nextJob = currPCB;
+                        nextJob = currPCB; //if there is another smaller waiting job then it replaces the previous larger waiting job
                     }
                 }
             }
-            remainingJobs.remove(nextJob);
-            order[i] = nextJob;
+            remainingJobs.remove(nextJob); //jobs are only completed once
+            order[i] = nextJob; 
             jobDone = jobDone + nextJob.getDuration();
             nextJob = null;
         }
@@ -120,7 +120,7 @@ public class FIFOQueue{
         return size;
     }
 
-    private void adjustNdx(int startNdx){
+    private void adjustNdx(int startNdx){ //start ndx is "empty" and element of start ndx is moved back 1 ndx along with every element after starting ndx
         for(int i = queueRep.length-1; i>startNdx; i--){
             if(queueRep[i] == null && queueRep[i-1] == null){
                 continue;
