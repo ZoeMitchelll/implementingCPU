@@ -12,35 +12,23 @@
  */
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Queue;
-
 public class FIFOQueue{
     // Array used to implement the queue.
     private PCB[] queueRep;         //**** Queue of PCB
-    private int size, front, rear;
-
-    // Length of the array used to implement the queue.
-    private static int CAPACITY = 100;	//Default Queue size *never used
-
-
-    // Initializes the queue to use an array of default length.
-    public FIFOQueue (){
-        queueRep = new PCB [CAPACITY];  //****
-        size  = 0; front = 0; rear  = 0;
-    }
+    private int size, front;
+    private static int CAPACITY;
+    private PCB[] deletedPCB;
 
     // Initializes the queue to use an array of given length.
     public FIFOQueue (int cap){
         queueRep = new PCB [cap];
-        size  = 0; front = 0; rear  = 0; //only uses front and size
+        size  = 0; front = 0; //only uses front and size
+        CAPACITY = cap;
+        deletedPCB = new PCB[cap];
     }
 
     // Inserts an element at the rear of the queue.
     public void enQueue (PCB data) throws NullPointerException, IllegalStateException{
-        rear++;
         size++;
         if(queueRep[0]==null){
             queueRep[0] = data; //only PCB is always first PCB
@@ -63,33 +51,40 @@ public class FIFOQueue{
     }
 
     // Inserts an element in order of SJN if waiting status.
-    public void sortSJN () throws NullPointerException, IllegalStateException{
+    public PCB[] sortSJN () throws NullPointerException, IllegalStateException{
         PCB[] order = new PCB[size];
         order[0] = queueRep[0];
+        deletedPCB[0] = order[0];
         int jobDone = queueRep[0].getArrival()+queueRep[0].getDuration();
         PCB nextJob = null;
-        ArrayList<PCB> remainingJobs = new ArrayList<PCB>(Arrays.asList(queueRep));
-        Iterator<PCB> itr = remainingJobs.iterator();
+        PCB[] remainingJobs = queueRep;
         for(int i = 1; i<size; i++) {// earliest job is completed and waiting jobs must be sorted
             for(PCB currPCB: remainingJobs){
-                if (currPCB.getArrival() < jobDone) {
-                    if (nextJob == null) {
-                        nextJob = currPCB; //if there is only one waiting job then that job is next
-                    } else if (currPCB.getDuration() < nextJob.getDuration()) {
-                        nextJob = currPCB; //if there is another smaller waiting job then it replaces the previous larger waiting job
+                if(remaining(currPCB)) {
+                    if (currPCB.getArrival() < jobDone) {
+                        if (nextJob == null) {
+                            nextJob = currPCB; //if there is only one waiting job then that job is next
+                        } else if (currPCB.getDuration() < nextJob.getDuration()) {
+                            nextJob = currPCB; //if there is another smaller waiting job then it replaces the previous larger waiting job
+                        }
                     }
                 }
             }
-            remainingJobs.remove(nextJob); //jobs are only completed once
-            order[i] = nextJob; 
+            order[i] = nextJob;
+            deletedPCB[i] = nextJob; //jobs are only completed once
             jobDone = jobDone + nextJob.getDuration();
             nextJob = null;
         }
-        for (PCB p: order) {
-            System.out.println("order " + " " +p.getDuration() + "size " + size);
+       return order;
+    }
+    private boolean remaining(PCB job){
+        boolean remaining = true;
+        for(PCB deleted: deletedPCB){
+            if(job == deleted){
+                remaining = false;
+            }
         }
-        System.out.println();
-        queueRep = order;
+        return remaining;
     }
 
     // Removes the front element from the queue.
@@ -129,4 +124,48 @@ public class FIFOQueue{
         }
     }
 
+    public void updateStatus(int enteredTime) {
+        for(PCB job: queueRep){
+            if(job.getArrival() == enteredTime){
+                job.changeStatus(PCB.status.READY);
+            }
+        }
+    }
+
+    public PCB getShortestJobNext(){
+        PCB shortest = null;
+        for(PCB job: queueRep) {
+            if (job.getS() == PCB.status.READY){
+                if(shortest == null || job.getCycles()<shortest.getCycles()){
+                    shortest = job;
+                }
+            }
+        }
+        return shortest;
+    }
+//    public PCB[] SJNsort(){
+//        PCB[] order = new PCB[size];
+//        order[0] = queueRep[0];
+//        int nextJobArrives;
+//        PCB shortestJobReady = null;
+//        PCB[] remainingJobs = queueRep;
+//        for(int i = 1; i<size; i++) {// earliest job is completed and waiting jobs must be sorted
+//            for(PCB currPCB: remainingJobs){
+//                if(remaining(currPCB)) {
+//                    if (currPCB.getArrival() < jobDone) {
+//                        if (nextJob == null) {
+//                            nextJob = currPCB; //if there is only one waiting job then that job is next
+//                        } else if (currPCB.getDuration() < nextJob.getDuration()) {
+//                            nextJob = currPCB; //if there is another smaller waiting job then it replaces the previous larger waiting job
+//                        }
+//                    }
+//                }
+//                deletedPCB[size-1] = nextJob; //jobs are only completed once
+//            }
+//            order[i] = nextJob;
+//            jobDone = jobDone + nextJob.getDuration();
+//            nextJob = null;
+//        }
+//        return order;
+//    }
 }

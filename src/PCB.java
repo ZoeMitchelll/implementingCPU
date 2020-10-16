@@ -71,4 +71,7 @@ public class PCB implements Comparable <PCB>{
         arrivalTime = t;
     }
 
+    public status getS() {
+        return s;
+    }
 }

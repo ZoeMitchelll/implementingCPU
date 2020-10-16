@@ -3,6 +3,7 @@ import java.util.*;
 
 
 public class Main{
+    private static int numProcesses;
 
     public static void InitQueue(FIFOQueue Q, PCB [] P)
     {
@@ -16,11 +17,11 @@ public class Main{
     public static void ViewProcesses(PCB [] P, int size)
     {
         //View all process objects. Do not modify.
-        System.out.println("Process ID         Duration");
-        System.out.println(" __________________________");
+        System.out.println("Process ID         Duration         Arrival Time");
+        System.out.println(" _____________________________________________________");
         for (int i = 0; i < size; i++)
         {
-            System.out.println(P[i].getID() + "            " + P[i].getCycles());
+            System.out.println(P[i].getID() + "                   " + P[i].getCycles()+ "                   "+P[i].getArrival());
         }
     }
 
@@ -29,7 +30,7 @@ public class Main{
         //Initializes PCB objects. Do not modify.
         int val;
         int time;
-        for(int i = 1; i <= 5; i++)
+        for(int i = 1; i <= numProcesses; i++)
         {
             val = 5 + (int)(Math.random() * 60);
             time = (int)((Math.random() * 10)*(Math.random() * 10)-1);
@@ -40,8 +41,7 @@ public class Main{
 
     }
     public static void FCFS(FIFOQueue Q) {
-        //Simulate Round Robin scheduling on processes in P using the
-        //given time quantum
+        //Simulate First In First Out scheduling on processes in P
         PCB p;
 
         while(!Q.isEmpty()) //While more processes remain in queue
@@ -63,15 +63,48 @@ public class Main{
     }
 
     public static void SRT(FIFOQueue Q) {
-        //Your code here
-        //You will implement the First Come First Served scheduling algorithm
-        //You may assume all jobs arrive at time 0.
-    }
+        //Simulate Shortest Remaining Time
+        PCB p;
+        int currenttime = 0;
+        while(!Q.isEmpty()) //While more processes remain in queue
+        {
+            Q.updateStatus(currenttime);
+            p = Q.getShortestJobNext();//reorder queue
+            if(p != null){
+                if(p.getCycles() == p.getDuration()) {
+                    System.out.println("Running process " + p.getID() + ". " + p.getCycles() + " cycles remain.");
+                }
+                p.decrementCycles();    //Use one cycle
+                System.out.println(p.getCycles() + " cycles remain.");
+                if(p.getCycles() == 0){
+                    System.out.println("Process " + p.getID() + " has finished.");
+                    Q.deQueue();
+                }
+            }
+            currenttime++;
+        }
+
+        }
 
     public static void SJN(FIFOQueue Q) {
-        //Your code here
-        //You will implement the Shortest Job Next scheduling algorithm
-        //You may assume all jobs arrive at time 0.
+        //Simulate Shortest job Next scheduling on processes in P
+        PCB p;
+        PCB[] SJNorder = Q.sortSJN();
+        for(int i = 0; i<SJNorder.length; i++) //While more processes remain in queue
+        {
+            p = SJNorder[i];
+            System.out.println("Running process " + p.getID() + ". " + p.getCycles() + " cycles remain.");
+
+            //"Running" process here
+            while(p.getCycles() > 0)
+            {
+                //Use 1 cpu cycle
+                p.decrementCycles();    //Use one cycle
+                System.out.println(p.getCycles() + " cycles remain.");
+            }
+            System.out.println("Process " + p.getID() + " has finished.");
+        }
+
 
     }
 
@@ -124,18 +157,21 @@ public class Main{
     {
 
         int choice;
-        PCB [] P = new PCB[5];
-        FIFOQueue Q = new FIFOQueue();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("How many processes would you like to scheadule?");
+        int capacity = sc.nextInt();
+        numProcesses = capacity;
+        PCB [] P = new PCB[capacity];
+        FIFOQueue Q = new FIFOQueue(capacity);
         GenerateProcesses(P);
         InitQueue(Q, P);
-        Scanner sc = new Scanner(System.in);
         do
         {
             System.out.println("Process scheduling simulator. Make your choice:");
             System.out.println("1) View Processes");
             System.out.println("2) Run processes (FCFS)");
             System.out.println("3) Run processes (SJN)");
-            System.out.println("4) Run processes (SRT");
+            System.out.println("4) Run processes (SRT)");
             System.out.println("5) Run processes (Round Robin)");
             System.out.println("6) Quit");
             choice = sc.nextInt();
