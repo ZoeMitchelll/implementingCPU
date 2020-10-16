@@ -13,14 +13,6 @@ public class Main{
         }
     }
 
-    public static void InitQueue(BinaryHeap<PCB> Q, PCB [] P)
-    {
-        //Initialize ready queue. Do not modify.
-        for(int i = 0; i < P.length; i++)
-        {
-            Q.insert(P[i]);
-        }
-    }
     public static void ViewProcesses(PCB [] P, int size)
     {
         //View all process objects. Do not modify.
@@ -31,12 +23,7 @@ public class Main{
             System.out.println(P[i].getID() + "            " + P[i].getCycles());
         }
     }
-    public static void InitializeProcesses(PCB [] P)
-    {
-        //Instantiates process objects. Do not modify.
-        for(int i = 0; i < P.length; i++)
-            P[i] = new PCB();
-    }
+
     public static void GenerateProcesses(PCB [] P)
     {
         //Initializes PCB objects. Do not modify.
@@ -44,11 +31,10 @@ public class Main{
         int time;
         for(int i = 1; i <= 5; i++)
         {
-            P[i-1].setID(i);
             val = 5 + (int)(Math.random() * 60);
             time = (int)((Math.random() * 10)*(Math.random() * 10)-1);
-            P[i-1].setCycles(val); //Generate random cycle time
-            P[i-1].setArrivalTime(time);
+            P[i-1] = new PCB(val, time);
+            P[i-1].setID(i);
         }
 
 
@@ -65,8 +51,7 @@ public class Main{
         //You may assume all jobs arrive at time 0.
     }
 
-    public static void SJN(BinaryHeap<PCB> Q)
-    {
+    public static void SJN(FIFOQueue Q) {
         //Your code here
         //You will implement the Shortest Job Next scheduling algorithm
         //You may assume all jobs arrive at time 0.
@@ -82,7 +67,6 @@ public class Main{
 
         while(!Q.isEmpty()) //While more processes remain in queue
         {
-            p = new PCB();
             p = Q.deQueue(); //Fetch and remove process at head of queue
             System.out.println("Running process " + p.getID() + ". " + p.getCycles() + " cycles remain.");
 
@@ -125,11 +109,8 @@ public class Main{
         int choice;
         PCB [] P = new PCB[5];
         FIFOQueue Q = new FIFOQueue();
-        BinaryHeap<PCB> PQ = new BinaryHeap<PCB>();
-        InitializeProcesses(P);
         GenerateProcesses(P);
         InitQueue(Q, P);
-        InitQueue(PQ, P);
         Scanner sc = new Scanner(System.in);
         do
         {
