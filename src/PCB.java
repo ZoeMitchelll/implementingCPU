@@ -1,7 +1,7 @@
 public class PCB implements Comparable <PCB>{
     //Represents Process Control Block object
 
-    private static int ID = 0;
+    private int ID = 0;
     private status s;
     private int proccess_duration, cycles_remaining, arrivalTime;
     public enum status{RUNNING, READY, WAITING, HOLD};

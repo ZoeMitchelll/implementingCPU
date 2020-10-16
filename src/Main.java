@@ -40,9 +40,26 @@ public class Main{
 
     }
     public static void FCFS(FIFOQueue Q) {
-        //Your code here
-        //You will implement the First Come First Served scheduling algorithm
-        //You may assume all jobs arrive at time 0.
+        //Simulate Round Robin scheduling on processes in P using the
+        //given time quantum
+        PCB p;
+
+        while(!Q.isEmpty()) //While more processes remain in queue
+        {
+            p = Q.deQueue(); //Fetch and remove process at head of queue
+            System.out.println("Running process " + p.getID() + ". " + p.getCycles() + " cycles remain.");
+
+            //"Running" process here
+            while(p.getCycles() > 0)
+            {
+                    //Use 1 cpu cycle
+                    p.decrementCycles();    //Use one cycle
+                    System.out.println(p.getCycles() + " cycles remain.");
+            }
+            System.out.println("Process " + p.getID() + " has finished.");
+        }
+
+
     }
 
     public static void SRT(FIFOQueue Q) {
@@ -132,10 +149,10 @@ public class Main{
                     FCFS(Q);
                     break;
                 case 3:
-                    //SJN(PQ);
+                    SJN(Q);
                     break;
                 case 4:
-                    //SRT(Q)
+                    SRT(Q);
                     break;
                 case 5:
                     RoundRobin(Q, 5);
